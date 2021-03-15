@@ -10,6 +10,8 @@ func TestNewEtcdRegistry(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+
 	registry.RegistryService(Service{
 		Name:     "service1",
 		Port:     "8080",
