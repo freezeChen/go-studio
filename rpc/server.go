@@ -1,8 +1,6 @@
 package rpc
 
 import (
-	"context"
-	"go-studio/proto"
 	"google.golang.org/grpc"
 	"net"
 )
@@ -18,31 +16,16 @@ func NewServer(port string) *Server {
 	return s
 }
 
+func (s *Server) Server() *grpc.Server {
+	return s.server
+}
+
 func (s *Server) Start() error {
 	listen, err := net.Listen("tcp", ":"+s.port)
 	if err != nil {
 		return err
 	}
-
 	err = s.server.Serve(listen)
 	return err
 }
 
-func a() {
-	server := grpc.NewServer()
-	proto.RegisterGreetServer(server, &Greet{})
-
-
-	server.Serve("")
-}
-
-type Greet struct {
-}
-
-func (g *Greet) Morning(ctx context.Context, request *proto.GreetRequest) (*proto.GreetResponse, error) {
-	panic("implement me")
-}
-
-func (g *Greet) Night(ctx context.Context, request *proto.GreetRequest) (*proto.GreetResponse, error) {
-	panic("implement me")
-}

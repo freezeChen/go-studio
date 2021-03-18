@@ -6,9 +6,10 @@ type Service struct {
 	MetaData map[string]string
 }
 
-type Registry interface {
+type Registrar interface {
 	RegistryService(Service) error
 	//UnRegistryService(Service) error
-	ListServices()(map[string][]string, error)
+	ListServices() (map[string][]string, error)
+
 	WatchServices()
 }

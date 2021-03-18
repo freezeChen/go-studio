@@ -20,7 +20,7 @@ type Etcd struct {
 	watch clientv3.Watcher
 }
 
-func NewEtcdRegistry(ctx context.Context, host []string) (Registry, error) {
+func NewEtcdRegistry(ctx context.Context, host []string) (Registrar, error) {
 	var registry = new(Etcd)
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   host,
