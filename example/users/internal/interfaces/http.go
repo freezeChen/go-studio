@@ -11,6 +11,8 @@ func NewHttpServer() *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
 
+
+
 	srv.Handle("/", engine)
 
 	return srv

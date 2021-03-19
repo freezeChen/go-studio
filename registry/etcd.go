@@ -2,6 +2,7 @@ package registry
 
 import (
 	"context"
+	"encoding/json"
 	"go.etcd.io/etcd/clientv3"
 	"net"
 	"time"
@@ -35,7 +36,7 @@ func NewEtcdRegistry(ctx context.Context, host []string) (Registrar, error) {
 	return registry, nil
 }
 
-func (e *Etcd) RegistryService(service Service) error {
+func (e *Etcd) RegistryService(service *Service) error {
 	if e.lease != nil {
 		e.lease.Close()
 	}
@@ -51,7 +52,12 @@ func (e *Etcd) RegistryService(service Service) error {
 		return err
 	}
 
-	_, err = e.kv.Put(e.ctx, "studio:"+service.Name, GetLocalIp()+":"+service.Port, clientv3.WithLease(grant.ID))
+	value, err := json.Marshal(service)
+	if err != nil {
+		return err
+	}
+
+	_, err = e.kv.Put(e.ctx, "studio:"+service.Name, string(value), clientv3.WithLease(grant.ID))
 	if err != nil {
 		return err
 	}
@@ -59,8 +65,8 @@ func (e *Etcd) RegistryService(service Service) error {
 	return nil
 }
 
-func (e *Etcd) unRegistryService(service Service) error {
-	_, err := e.client.Delete(context.TODO(), service.Name)
+func (e *Etcd) UnRegistryService(service *Service) error {
+	_, err := e.client.Delete(context.TODO(), "studio:"+service.Name)
 	return err
 }
 
@@ -69,7 +75,7 @@ func (e *Etcd) ListServices() (map[string][]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var v =make(map[string][]string)
+	var v = make(map[string][]string)
 	for _, kv := range resp.Kvs {
 		v[string(kv.Key)] = append(v[string(kv.Key)], string(kv.Value))
 	}

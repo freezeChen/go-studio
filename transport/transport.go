@@ -6,7 +6,7 @@ const (
 )
 
 type Server interface {
-	Endpoint() (string, error)
+	Endpoint() (string, string, error)
 	Start() error
 	Stop() error
 }

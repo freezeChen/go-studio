@@ -4,7 +4,6 @@ import (
 	"context"
 	go_studio "go-studio"
 	"go-studio/example/users/internal/interfaces"
-	"go-studio/proto"
 	"go-studio/registry"
 )
 
@@ -29,15 +28,4 @@ func main() {
 	if err := app.Start(); err != nil {
 		panic(err)
 	}
-}
-
-type Greet struct {
-}
-
-func (g *Greet) Morning(ctx context.Context, request *proto.GreetRequest) (*proto.GreetResponse, error) {
-	panic("implement me")
-}
-
-func (g *Greet) Night(ctx context.Context, request *proto.GreetRequest) (*proto.GreetResponse, error) {
-	panic("implement me")
 }

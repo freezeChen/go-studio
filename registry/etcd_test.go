@@ -12,11 +12,6 @@ func TestNewEtcdRegistry(t *testing.T) {
 	}
 
 
-	registry.RegistryService(Service{
-		Name:     "service1",
-		Port:     "8080",
-		MetaData: nil,
-	})
 
 	services, err := registry.ListServices()
 	if err != nil {

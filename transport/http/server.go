@@ -26,9 +26,9 @@ func (s *Server) Handle(path string, h http.Handler) {
 	s.router.Handle(path, h)
 }
 
-func (s *Server) Endpoint() (string, error) {
+func (s *Server) Endpoint() (string, string, error) {
 	extract, err := addr.Extract(s.address)
-	return extract, err
+	return "HTTP", extract, err
 }
 
 func (s *Server) Start() error {
