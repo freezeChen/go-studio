@@ -9,7 +9,7 @@ import (
 
 func main() {
 	ctx := context.Background()
-	etcdRegistry, err := registry.NewEtcdRegistry(ctx, []string{"127.0.0.1:2379"})
+	etcdRegistry, err := registry.NewEtcdRegistry(ctx, []string{"localhost:2379"})
 	if err != nil {
 		panic(err)
 	}

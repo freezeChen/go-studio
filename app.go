@@ -37,6 +37,7 @@ func New(opts ...Option) *App {
 	service := &registry.Service{
 		Id:        id,
 		Name:      options.name,
+		Version:   options.version,
 		Endpoints: enpoints,
 		MetaData:  options.metadata,
 	}
@@ -103,6 +104,5 @@ func (a *App) Stop() error {
 	if a.cancel != nil {
 		a.cancel()
 	}
-
 	return nil
 }

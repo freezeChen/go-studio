@@ -11,7 +11,7 @@ func TestNewEtcdRegistry(t *testing.T) {
 		panic(err)
 	}
 
-
+	registry.RegistryService(&Service{Id: "123333"})
 
 	services, err := registry.ListServices()
 	if err != nil {

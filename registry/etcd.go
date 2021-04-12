@@ -3,6 +3,7 @@ package registry
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go.etcd.io/etcd/clientv3"
 	"net"
 	"time"
@@ -57,16 +58,31 @@ func (e *Etcd) RegistryService(service *Service) error {
 		return err
 	}
 
-	_, err = e.kv.Put(e.ctx, "studio:"+service.Name, string(value), clientv3.WithLease(grant.ID))
+	_, err = e.kv.Put(e.ctx, fmt.Sprintf("studio/%s/%s", service.Name, service.Id), string(value), clientv3.WithLease(grant.ID))
 	if err != nil {
 		return err
 	}
+
+	hb, err := e.client.KeepAlive(e.ctx, clientv3.LeaseID(grant.ID))
+
+	go func() {
+		for {
+			select {
+			case _, ok := <-hb:
+				if !ok {
+					return
+				}
+			case <-e.ctx.Done():
+				return
+			}
+		}
+	}()
 
 	return nil
 }
 
 func (e *Etcd) UnRegistryService(service *Service) error {
-	_, err := e.client.Delete(context.TODO(), "studio:"+service.Name)
+	_, err := e.client.Delete(context.TODO(), fmt.Sprintf("sutdio/%s/%s", service.Name, service.Id))
 	return err
 }
 
