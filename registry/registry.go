@@ -11,7 +11,7 @@ type Service struct {
 type Registrar interface {
 	RegistryService(*Service) error
 	UnRegistryService(*Service) error
-	ListServices() (map[string][]string, error)
-
+	GetService(serviceName string) ([]*Service, error)
+	ListServices() (map[string][]*Service, error)
 	WatchServices()
 }

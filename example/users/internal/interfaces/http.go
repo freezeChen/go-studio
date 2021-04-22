@@ -6,14 +6,14 @@ import (
 )
 
 func NewHttpServer() *http.Server {
-	srv := http.NewServer("")
-
+	srv := http.NewServer(":8081")
 	gin.SetMode(gin.ReleaseMode)
-	engine := gin.New()
+	engine := gin.Default()
+	engine.GET("test", func(ctx *gin.Context) {
+		ctx.JSON(200, "hello")
+	})
 
-
-
-	srv.Handle("/", engine)
+	srv.Handle(engine)
 
 	return srv
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go.etcd.io/etcd/clientv3"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -86,17 +87,41 @@ func (e *Etcd) UnRegistryService(service *Service) error {
 	return err
 }
 
-func (e *Etcd) ListServices() (map[string][]string, error) {
+func (e *Etcd) ListServices() (map[string][]*Service, error) {
 	resp, err := e.client.Get(context.TODO(), "studio", clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}
-	var v = make(map[string][]string)
+	var v = make(map[string][]*Service)
+
 	for _, kv := range resp.Kvs {
-		v[string(kv.Key)] = append(v[string(kv.Key)], string(kv.Value))
+		var s Service
+		err := json.Unmarshal(kv.Value, &s)
+		if err != nil {
+			return nil, err
+		}
+		k := string(kv.Key)[:strings.LastIndex(string(kv.Key), "/")]
+		v[k] = append(v[k], &s)
 	}
 
 	return v, nil
+}
+
+func (e *Etcd) GetService(serviceName string) ([]*Service, error) {
+	resp, err := e.client.Get(context.TODO(), fmt.Sprintf("studio/%s",serviceName), clientv3.WithPrefix())
+	if err != nil {
+		return nil, err
+	}
+	var svcs = make([]*Service, 0)
+	for _, kv := range resp.Kvs {
+		var svc Service
+		err := json.Unmarshal(kv.Value, &svc)
+		if err != nil {
+			return nil, err
+		}
+		svcs = append(svcs, &svc)
+	}
+	return svcs, nil
 }
 
 func (e *Etcd) WatchServices() {
