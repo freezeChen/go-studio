@@ -2,11 +2,11 @@ package interfaces
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-studio/transport/http"
+	http2 "go-studio/core/transport/http"
 )
 
-func NewHttpServer() *http.Server {
-	srv := http.NewServer(":8081")
+func NewHttpServer() *http2.Server {
+	srv := http2.NewServer(":8081")
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
 	engine.GET("test", func(ctx *gin.Context) {
