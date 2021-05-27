@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	"go-studio/registry"
-	"go-studio/transport"
+	registry2 "go-studio/core/registry"
+	transport2 "go-studio/core/transport"
 	"golang.org/x/sync/errgroup"
 	"log"
 	"os"
@@ -19,8 +19,8 @@ type App struct {
 	ctx     context.Context
 	opts    Options
 	cancel  func()
-	service *registry.Service
-	servers []transport.Server
+	service *registry2.Service
+	servers []transport2.Server
 }
 
 func New(opts ...Option) *App {
@@ -34,7 +34,7 @@ func New(opts ...Option) *App {
 			enpoints[kind] = enpoint
 		}
 	}
-	service := &registry.Service{
+	service := &registry2.Service{
 		Id:        id,
 		Name:      options.name,
 		Version:   options.version,

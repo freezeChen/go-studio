@@ -2,4 +2,4 @@ default.etcd
 .idea
 *.test
 example/users/cmd/cmd
-gateway/cmd/cmd
+tools/gateway/cmd/cmd

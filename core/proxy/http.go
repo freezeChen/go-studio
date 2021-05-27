@@ -3,7 +3,7 @@ package proxy
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go-studio/registry"
+	registry2 "go-studio/core/registry"
 	"math/rand"
 	"net/http"
 	"net/http/httputil"
@@ -16,7 +16,7 @@ type Proxy struct {
 	first    bool
 }
 
-func NewProxy(reg registry.Registrar) *httputil.ReverseProxy {
+func NewProxy(reg registry2.Registrar) *httputil.ReverseProxy {
 
 	director := func(req *http.Request) {
 		reqPath := req.URL.Path

@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	go_studio "go-studio"
+	registry2 "go-studio/core/registry"
 	"go-studio/example/users/internal/interfaces"
-	"go-studio/registry"
 )
 
 func main() {
 	ctx := context.Background()
-	etcdRegistry, err := registry.NewEtcdRegistry(ctx, []string{"localhost:2379"})
+	etcdRegistry, err := registry2.NewEtcdRegistry(ctx, []string{"localhost:2379"})
 	if err != nil {
 		panic(err)
 	}

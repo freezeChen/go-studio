@@ -2,8 +2,8 @@ package go_studio
 
 import (
 	"context"
-	"go-studio/registry"
-	"go-studio/transport"
+	registry2 "go-studio/core/registry"
+	transport2 "go-studio/core/transport"
 )
 
 type Option func(o *Options)
@@ -13,8 +13,8 @@ type Options struct {
 	name      string
 	version   string
 	metadata  map[string]string
-	registrar registry.Registrar
-	servers    []transport.Server
+	registrar registry2.Registrar
+	servers   []transport2.Server
 }
 
 func newOptions(opts ...Option) Options {
@@ -41,7 +41,7 @@ func Version(version string) Option {
 	}
 }
 
-func Server(server ...transport.Server) Option {
+func Server(server ...transport2.Server) Option {
 	return func(o *Options) {
 		o.servers = server
 	}
@@ -53,7 +53,7 @@ func Context(ctx context.Context) Option {
 	}
 }
 
-func Registrar(r registry.Registrar) Option {
+func Registrar(r registry2.Registrar) Option {
 	return func(o *Options) {
 		o.registrar = r
 	}
