@@ -23,14 +23,16 @@ const (
 )
 
 type TableMapper struct {
-	TableName string
-	Columns   []ColumnMapper
-	HasImport bool
+	TableName       string
+	TableMapperName string
+	Columns         []ColumnMapper
+	HasImport       bool
 }
 type ColumnMapper struct {
-	Name string
-	Type string
-	Tag  template.HTML
+	Name       string
+	MapperName string
+	Type       string
+	Tag        template.HTML
 }
 
 func MysqlDataSource(ctx *cli.Context) error {
@@ -69,31 +71,33 @@ func fromDataSource(url, tableName, dir string) error {
 	}
 	for _, table := range dbMetas {
 		if table.Name == tableName {
-			tableMaper := TableMapper{
-				TableName: names.SnakeMapper{}.Table2Obj(table.Name),
-				Columns:   make([]ColumnMapper, 0, len(table.ColumnsSeq())),
+			tableMapper := TableMapper{
+				TableName:       table.Name,
+				TableMapperName: names.SnakeMapper{}.Table2Obj(table.Name),
+				Columns:         make([]ColumnMapper, 0, len(table.ColumnsSeq())),
 			}
 
-			if isExist(path.Join(dir, fmt.Sprintf("%s.go", tableMaper.TableName))) {
+			if isExist(path.Join(dir, fmt.Sprintf("%s.go", tableMapper.TableName))) {
 				fmt.Println(table.Name + " is exist")
-				continue
+				//continue
 			}
 
 			for _, column := range table.Columns() {
 				if typeString(column) == "jsontime.JsonTime" {
-					tableMaper.HasImport = true
+					tableMapper.HasImport = true
 				}
-				tableMaper.Columns = append(tableMaper.Columns, ColumnMapper{
-					Name: names.SnakeMapper{}.Table2Obj(column.Name),
-					Type: typeString(column),
-					Tag:  tag(table, column),
+				tableMapper.Columns = append(tableMapper.Columns, ColumnMapper{
+					Name:       column.Name,
+					MapperName: names.SnakeMapper{}.Table2Obj(column.Name),
+					Type:       typeString(column),
+					Tag:        tag(table, column),
 				})
 			}
 			newbytes := bytes.NewBufferString("")
-			err = tmpl.Execute(newbytes, tableMaper)
+			err = tmpl.Execute(newbytes, tableMapper)
 			all, _ := ioutil.ReadAll(newbytes)
 
-			file, err := os.Create(path.Join(dir, tableMaper.TableName+".go"))
+			file, err := os.Create(path.Join(dir, tableMapper.TableName+".go"))
 			if err != nil {
 				return err
 			}
