@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"os"
+	"os/user"
 	"path"
 	"sort"
 	"strings"
@@ -53,13 +54,31 @@ func fromDataSource(url, tableName, dir string) error {
 		}
 	}
 
+	current, err := user.Current()
+	if err != nil {
+		return err
+	}
+	tpl := tpl_model
+
+	if isExist(current.HomeDir + "/.studioctl/model.template") {
+		file, err := os.Open(current.HomeDir + "/.studioctl/model.template")
+		if err != nil {
+			return err
+		}
+		all, err := ioutil.ReadAll(file)
+		if err != nil {
+			return err
+		}
+		tpl = fmt.Sprintf(string(all),"`","`")
+	}
+
 	engine, err := xorm.NewEngine("mysql", url)
 	if err != nil {
 		return err
 	}
 
 	t := template.New("gen model")
-	tmpl, err := t.Parse(tpl_model)
+	tmpl, err := t.Parse(tpl)
 	if err != nil {
 		return err
 	}
@@ -79,7 +98,7 @@ func fromDataSource(url, tableName, dir string) error {
 
 			if isExist(path.Join(dir, fmt.Sprintf("%s.go", tableMapper.TableName))) {
 				fmt.Println(table.Name + " is exist")
-				//continue
+				continue
 			}
 
 			for _, column := range table.Columns() {

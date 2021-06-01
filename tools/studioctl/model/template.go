@@ -70,6 +70,10 @@ func (m *{{.TableMapperName}}Model) Delete(id int64) error {
 	return nil
 }
 
-
+func (m *{{.TableMapperName}}Model) List() (list []*{{.TableMapperName}}, err error) {
+	list = make([]*{{.TableMapperName}}, 0)
+	err = m.db.Find(&list)
+	return
+}
 
 `, "`", "`")
