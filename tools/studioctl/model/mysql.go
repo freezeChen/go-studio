@@ -33,6 +33,7 @@ type ColumnMapper struct {
 	Name       string
 	MapperName string
 	Type       string
+	Comment    string
 	Tag        template.HTML
 }
 
@@ -69,7 +70,7 @@ func fromDataSource(url, tableName, dir string) error {
 		if err != nil {
 			return err
 		}
-		tpl = fmt.Sprintf(string(all),"`","`")
+		tpl = fmt.Sprintf(string(all), "`", "`")
 	}
 
 	engine, err := xorm.NewEngine("mysql", url)
@@ -109,6 +110,7 @@ func fromDataSource(url, tableName, dir string) error {
 					Name:       column.Name,
 					MapperName: names.SnakeMapper{}.Table2Obj(column.Name),
 					Type:       typeString(column),
+					Comment:    column.Comment,
 					Tag:        tag(table, column),
 				})
 			}
@@ -137,40 +139,42 @@ func typeString(col *schemas.Column) string {
 }
 
 func tag(table *schemas.Table, col *schemas.Column) template.HTML {
-	isNameId := col.FieldName == "Id"
-	isIdPk := isNameId && typeString(col) == "int64"
+	//isNameId := col.FieldName == "Id"
+	//isIdPk := isNameId && typeString(col) == "int64"
 
 	var res []string
-	if !col.Nullable {
-		if !isIdPk {
-			res = append(res, "not null")
-		}
-	}
+	//if !col.Nullable {
+	//	if !isIdPk {
+	//		res = append(res, "not null")
+	//	}
+	//}
 	if col.IsPrimaryKey {
 		res = append(res, "pk")
 	}
-	if col.Default != "" {
-		res = append(res, "default "+col.Default)
-	}
+	//if col.Default != "" {
+	//	res = append(res, "default "+col.Default)
+	//}
 	if col.IsAutoIncrement {
 		res = append(res, "autoincr")
 	}
 
-	/*if col.SQLType.IsTime() && include(created, col.Name) {
+	if col.SQLType.IsTime() && strings.Contains(col.Name, "created") {
 		res = append(res, "created")
 	}
 
-	if col.SQLType.IsTime() && include(updated, col.Name) {
+	if col.SQLType.IsTime() && strings.Contains(col.Name, "updated") {
 		res = append(res, "updated")
 	}
 
-	if col.SQLType.IsTime() && include(deleted, col.Name) {
+	if col.SQLType.IsTime() && strings.Contains(col.Name, "delete") {
 		res = append(res, "deleted")
-	}*/
-
-	if /*supportComment &&*/ col.Comment != "" {
-		res = append(res, fmt.Sprintf("comment('%s')", col.Comment))
 	}
+
+	res = append(res, "'"+col.Name+"'")
+
+	//if /*supportComment &&*/ col.Comment != "" {
+	//	res = append(res, fmt.Sprintf("comment('%s')", col.Comment))
+	//}
 
 	names := make([]string, 0, len(col.Indexes))
 	for name := range col.Indexes {
@@ -191,46 +195,46 @@ func tag(table *schemas.Table, col *schemas.Column) template.HTML {
 		}
 		res = append(res, uistr)
 	}
+	/*
+		nstr := col.SQLType.Name
+		if col.Length != 0 {
+			if col.Length2 != 0 {
+				nstr += fmt.Sprintf("(%v,%v)", col.Length, col.Length2)
+			} else {
+				nstr += fmt.Sprintf("(%v)", col.Length)
+			}
+		} else if len(col.EnumOptions) > 0 { //enum
+			nstr += "("
+			opts := ""
 
-	nstr := col.SQLType.Name
-	if col.Length != 0 {
-		if col.Length2 != 0 {
-			nstr += fmt.Sprintf("(%v,%v)", col.Length, col.Length2)
-		} else {
-			nstr += fmt.Sprintf("(%v)", col.Length)
-		}
-	} else if len(col.EnumOptions) > 0 { //enum
-		nstr += "("
-		opts := ""
+			enumOptions := make([]string, 0, len(col.EnumOptions))
+			for enumOption := range col.EnumOptions {
+				enumOptions = append(enumOptions, enumOption)
+			}
+			sort.Strings(enumOptions)
 
-		enumOptions := make([]string, 0, len(col.EnumOptions))
-		for enumOption := range col.EnumOptions {
-			enumOptions = append(enumOptions, enumOption)
-		}
-		sort.Strings(enumOptions)
+			for _, v := range enumOptions {
+				opts += fmt.Sprintf(",'%v'", v)
+			}
+			nstr += strings.TrimLeft(opts, ",")
+			nstr += ")"
+		} else if len(col.SetOptions) > 0 { //enum
+			nstr += "("
+			opts := ""
 
-		for _, v := range enumOptions {
-			opts += fmt.Sprintf(",'%v'", v)
-		}
-		nstr += strings.TrimLeft(opts, ",")
-		nstr += ")"
-	} else if len(col.SetOptions) > 0 { //enum
-		nstr += "("
-		opts := ""
+			setOptions := make([]string, 0, len(col.SetOptions))
+			for setOption := range col.SetOptions {
+				setOptions = append(setOptions, setOption)
+			}
+			sort.Strings(setOptions)
 
-		setOptions := make([]string, 0, len(col.SetOptions))
-		for setOption := range col.SetOptions {
-			setOptions = append(setOptions, setOption)
+			for _, v := range setOptions {
+				opts += fmt.Sprintf(",'%v'", v)
+			}
+			nstr += strings.TrimLeft(opts, ",")
+			nstr += ")"
 		}
-		sort.Strings(setOptions)
-
-		for _, v := range setOptions {
-			opts += fmt.Sprintf(",'%v'", v)
-		}
-		nstr += strings.TrimLeft(opts, ",")
-		nstr += ")"
-	}
-	res = append(res, nstr)
+		res = append(res, nstr)*/
 	if len(res) > 0 {
 		return template.HTML(fmt.Sprintf(`xorm:"%s"`, strings.Join(res, " ")))
 	}
