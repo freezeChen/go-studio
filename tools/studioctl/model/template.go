@@ -12,7 +12,7 @@ type (
 	}
 	
 	{{.TableMapperName}} struct {
-{{range .Columns}}		{{.MapperName}}	{{.Type}}	%s{{.Tag}}%s 
+{{range .Columns}}		{{.MapperName}}	{{.Type}}	%s{{.Tag}} json:"{{.Name}}"%s // {{.Comment}}
 {{end}}	}
 )
 
