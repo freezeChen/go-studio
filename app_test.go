@@ -2,14 +2,14 @@ package go_studio
 
 import (
 	"context"
-	registry2 "go-studio/core/registry"
+	"github.com/freezeChen/go-studio/core/registry"
 	"testing"
 	"time"
 )
 
 func TestApp(t *testing.T) {
 	ctx := context.Background()
-	etcdRegistry, err := registry2.NewEtcdRegistry(ctx, []string{"127.0.0.1:2379"})
+	etcdRegistry, err := registry.NewEtcdRegistry(ctx, []string{"127.0.0.1:2379"})
 	if err != nil {
 		panic(err)
 	}

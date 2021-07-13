@@ -3,3 +3,4 @@ default.etcd
 *.test
 example/users/cmd/cmd
 tools/gateway/cmd/cmd
+*.exe

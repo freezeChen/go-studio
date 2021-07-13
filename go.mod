@@ -1,4 +1,4 @@
-module go-studio
+module github.com/freezeChen/go-studio
 
 go 1.16
 
