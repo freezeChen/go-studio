@@ -2,7 +2,7 @@ package interfaces
 
 import (
 	"github.com/gin-gonic/gin"
-	http2 "go-studio/core/transport/http"
+	http2 "github.com/freezeChen/go-studio/core/transport/http"
 )
 
 func NewHttpServer() *http2.Server {

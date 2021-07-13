@@ -2,9 +2,9 @@ package model
 
 import "fmt"
 
-var s = `package model
+var tpl_model = `package model
 {{if .HasImport}}
-import "go-studio/core/jsontime"
+import "github.com/freezeChen/go-studio/core/jsontime"
 {{end}}
 type (
 	{{.TableMapperName}}Model struct {
@@ -78,7 +78,7 @@ func (m *{{.TableMapperName}}Model) List() (list []*{{.TableMapperName}}, err er
 
 `
 
-var tpl_model = fmt.Sprintf(`package model
+var s = fmt.Sprintf(`package model
 
 import "xorm.io/xorm"
 {{if .HasImport}}

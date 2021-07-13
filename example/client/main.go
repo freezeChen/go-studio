@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	go_studio "go-studio"
-	registry2 "go-studio/core/registry"
+	go_studio "github.com/freezeChen/go-studio"
+	registry2 "github.com/freezeChen/go-studio/core/registry"
 	"time"
 )
 

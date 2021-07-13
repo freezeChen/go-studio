@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	go_studio "go-studio"
-	registry2 "go-studio/core/registry"
-	"go-studio/example/users/internal/interfaces"
+	go_studio "github.com/freezeChen/go-studio"
+	registry2 "github.com/freezeChen/go-studio/core/registry"
+	"github.com/freezeChen/go-studio/example/users/internal/interfaces"
 )
 
 func main() {

@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	proxy2 "go-studio/core/proxy"
-	registry2 "go-studio/core/registry"
+	proxy2 "github.com/freezeChen/go-studio/core/proxy"
+	registry2 "github.com/freezeChen/go-studio/core/registry"
 	"log"
 	"net/http"
 )

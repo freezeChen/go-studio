@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/freezeChen/go-studio/tools/studioctl/model"
 	"github.com/urfave/cli"
-	"go-studio/tools/studioctl/model"
 	"os"
 	"runtime"
 )

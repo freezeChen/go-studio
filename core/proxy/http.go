@@ -3,7 +3,7 @@ package proxy
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	registry2 "go-studio/core/registry"
+	registry2 "github.com/freezeChen/go-studio/core/registry"
 	"math/rand"
 	"net/http"
 	"net/http/httputil"
