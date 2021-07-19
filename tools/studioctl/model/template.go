@@ -2,6 +2,7 @@ package model
 
 import "fmt"
 
+<<<<<<< HEAD
 var tpl_model = fmt.Sprintf(`package model
 {{if .HasImport}}
 import "github.com/freezeChen/go-studio/core/jsontime"
@@ -79,10 +80,14 @@ func (m *{{.TableMapperName}}Model) List() (list []*{{.TableMapperName}}, err er
 `,"`","`")
 
 var s = fmt.Sprintf(`package model
+=======
+
+var tpl_model = fmt.Sprintf(`package model
+>>>>>>> 15fa8d3 (temp)
 
 import "xorm.io/xorm"
 {{if .HasImport}}
-import "gitee.com/bethink1501/24on-library/lib/jsontime"
+import "github.com/freezeChen/go-studio/core/jsontime"
 {{end}}
 type (
 	{{.TableMapperName}}Model struct {
