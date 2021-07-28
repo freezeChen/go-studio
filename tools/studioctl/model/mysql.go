@@ -21,6 +21,7 @@ const (
 	flagURL   = "url"
 	flagDir   = "dir"
 	flagTable = "table"
+	flagStyle = "style"
 )
 
 type TableMapper struct {
@@ -41,10 +42,11 @@ func MysqlDataSource(ctx *cli.Context) error {
 	url := ctx.String(flagURL)
 	dir := ctx.String(flagDir)
 	table := ctx.String(flagTable)
-	return fromDataSource(url, table, dir)
+	style := ctx.String(flagStyle)
+	return fromDataSource(url, table, dir, style)
 }
 
-func fromDataSource(url, tableName, dir string) error {
+func fromDataSource(url, tableName, dir, style string) error {
 
 	if dir != "" {
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -59,7 +61,14 @@ func fromDataSource(url, tableName, dir string) error {
 	if err != nil {
 		return err
 	}
-	tpl := tpl_model
+	tpl := s
+	var mapper names.Mapper
+
+	if style == "same" {
+		mapper = names.SameMapper{}
+	} else {
+		mapper = names.SnakeMapper{}
+	}
 
 	if isExist(current.HomeDir + "/.studioctl/model.template") {
 		file, err := os.Open(current.HomeDir + "/.studioctl/model.template")
@@ -90,10 +99,12 @@ func fromDataSource(url, tableName, dir string) error {
 		return err
 	}
 	for _, table := range dbMetas {
+		fmt.Println(table.Name,tableName)
 		if table.Name == tableName {
+
 			tableMapper := TableMapper{
 				TableName:       table.Name,
-				TableMapperName: names.SnakeMapper{}.Table2Obj(table.Name),
+				TableMapperName: mapper.Table2Obj(table.Name),
 				Columns:         make([]ColumnMapper, 0, len(table.ColumnsSeq())),
 			}
 
@@ -108,7 +119,7 @@ func fromDataSource(url, tableName, dir string) error {
 				}
 				tableMapper.Columns = append(tableMapper.Columns, ColumnMapper{
 					Name:       column.Name,
-					MapperName: names.SnakeMapper{}.Table2Obj(column.Name),
+					MapperName: mapper.Table2Obj(column.Name),
 					Type:       typeString(column),
 					Comment:    column.Comment,
 					Tag:        tag(table, column),

@@ -35,13 +35,16 @@ var (
 									Name:  "dir,d",
 									Usage: "the target dir",
 								},
+								cli.StringFlag{
+									Name:  "style,s",
+									Usage: "the table columns naming format like snake(default),same",
+								},
 							},
 							Action: model.MysqlDataSource,
 						},
 					},
 				},
 			},
-
 		},
 	}
 )

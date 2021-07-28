@@ -2,7 +2,7 @@ package model
 
 import "fmt"
 
-var tpl_model = `package model
+var tpl_model = fmt.Sprintf(`package model
 {{if .HasImport}}
 import "github.com/freezeChen/go-studio/core/jsontime"
 {{end}}
@@ -76,7 +76,7 @@ func (m *{{.TableMapperName}}Model) List() (list []*{{.TableMapperName}}, err er
 	return
 }
 
-`
+`,"`","`")
 
 var s = fmt.Sprintf(`package model
 
