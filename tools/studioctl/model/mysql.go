@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"path/filepath"
 	"sort"
 	"strings"
 	"xorm.io/xorm"
@@ -100,7 +101,11 @@ func fromDataSource(url, tableName, dir, style string) error {
 
 	for _, table := range dbMetas {
 
-		if tableName == table.Name {
+		match, err := filepath.Match(tableName, table.Name)
+		if err != nil {
+			return err
+		}
+		if match {
 
 			tableMapper := TableMapper{
 				TableName:       table.Name,
