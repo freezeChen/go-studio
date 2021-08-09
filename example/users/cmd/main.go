@@ -1,26 +1,24 @@
 package main
 
 import (
-	"context"
-	go_studio "github.com/freezeChen/go-studio"
-	registry2 "github.com/freezeChen/go-studio/core/registry"
+	studio "github.com/freezeChen/go-studio"
 	"github.com/freezeChen/go-studio/example/users/internal/interfaces"
 )
 
 func main() {
-	ctx := context.Background()
-	etcdRegistry, err := registry2.NewEtcdRegistry(ctx, []string{"localhost:2379"})
-	if err != nil {
-		panic(err)
-	}
+	//ctx := context.Background()
+	//etcdRegistry, err := registry.NewEtcdRegistry(ctx, []string{"localhost:2379"})
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	server := interfaces.NewHttpServer()
 
-	app := go_studio.New(
-		go_studio.Name("users"),
-		go_studio.Version("1.0"),
-		go_studio.Registrar(etcdRegistry),
-		go_studio.Server(
+	app := studio.New(
+		studio.Name("users"),
+		studio.Version("1.0"),
+		//studio.Registrar(etcdRegistry),
+		studio.Server(
 			server,
 		),
 	)

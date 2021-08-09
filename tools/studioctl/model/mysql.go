@@ -61,7 +61,7 @@ func fromDataSource(url, tableName, dir, style string) error {
 	if err != nil {
 		return err
 	}
-	tpl := s
+	tpl := tpl_model
 	var mapper names.Mapper
 
 	if style == "same" {
@@ -99,7 +99,7 @@ func fromDataSource(url, tableName, dir, style string) error {
 		return err
 	}
 	for _, table := range dbMetas {
-		fmt.Println(table.Name,tableName)
+		fmt.Println(table.Name, tableName)
 		if table.Name == tableName {
 
 			tableMapper := TableMapper{

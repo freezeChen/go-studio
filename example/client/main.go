@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	go_studio "github.com/freezeChen/go-studio"
-	registry2 "github.com/freezeChen/go-studio/core/registry"
+	"github.com/freezeChen/go-studio/core/registry"
 	"time"
 )
 
 func main() {
 	ctx := context.Background()
-	etcdRegistry, err := registry2.NewEtcdRegistry(ctx, []string{"localhost:2379"})
+	etcdRegistry, err := registry.NewEtcdRegistry(ctx, []string{"localhost:2379"})
 	if err != nil {
 		panic(err)
 	}

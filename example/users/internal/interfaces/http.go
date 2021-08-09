@@ -1,12 +1,12 @@
 package interfaces
 
 import (
+	 "github.com/freezeChen/go-studio/core/transport/http"
 	"github.com/gin-gonic/gin"
-	http2 "github.com/freezeChen/go-studio/core/transport/http"
 )
 
-func NewHttpServer() *http2.Server {
-	srv := http2.NewServer(":8081")
+func NewHttpServer() *http.Server {
+	srv := http.NewServer(":8081")
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
 	engine.GET("test", func(ctx *gin.Context) {

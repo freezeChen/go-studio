@@ -27,13 +27,12 @@ func (s *Server) Endpoint() (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-
 	return "HTTP", readIp + s.address, err
 }
 
 func (s *Server) Start() error {
 	s.s = &http.Server{
-		Addr: s.address,
+		Addr:    s.address,
 		Handler: s.h,
 	}
 	return s.s.ListenAndServe()
