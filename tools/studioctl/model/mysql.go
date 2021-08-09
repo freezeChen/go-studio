@@ -11,6 +11,7 @@ import (
 	"os/user"
 	"path"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"xorm.io/xorm"
@@ -148,9 +149,11 @@ func fromDataSource(url, tableName, dir, style string) error {
 
 func typeString(col *schemas.Column) string {
 
-	//decimal 类型使用float64
-	if strings.ToUpper(col.SQLType.Name) == "DECIMAL" {
-		return "float64"
+	switch col.SQLType.Name {
+	case schemas.UnsignedBigInt, schemas.UnsignedInt:
+		return reflect.TypeOf(int64(1)).String()
+	case schemas.Decimal:
+		return reflect.TypeOf(float64(1)).String()
 	}
 
 	s := schemas.SQLType2Type(col.SQLType).String()
