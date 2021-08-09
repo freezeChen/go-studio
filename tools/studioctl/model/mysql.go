@@ -147,6 +147,12 @@ func fromDataSource(url, tableName, dir, style string) error {
 }
 
 func typeString(col *schemas.Column) string {
+
+	//decimal 类型使用float64
+	if strings.ToUpper(col.SQLType.Name) == "DECIMAL" {
+		return "float64"
+	}
+
 	s := schemas.SQLType2Type(col.SQLType).String()
 	if s == "time.Time" {
 		return "jsontime.JsonTime"

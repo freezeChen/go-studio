@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/client/v3"
 	"net"
 	"strings"
 	"time"
@@ -108,7 +108,7 @@ func (e *Etcd) ListServices() (map[string][]*Service, error) {
 }
 
 func (e *Etcd) GetService(serviceName string) ([]*Service, error) {
-	resp, err := e.client.Get(context.TODO(), fmt.Sprintf("studio/%s",serviceName), clientv3.WithPrefix())
+	resp, err := e.client.Get(context.TODO(), fmt.Sprintf("studio/%s", serviceName), clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}
