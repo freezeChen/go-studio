@@ -148,10 +148,11 @@ func fromDataSource(url, tableName, dir, style string) error {
 }
 
 func typeString(col *schemas.Column) string {
-
 	switch col.SQLType.Name {
 	case schemas.UnsignedBigInt, schemas.UnsignedInt:
 		return reflect.TypeOf(int64(1)).String()
+	case schemas.UnsignedTinyInt, schemas.UnsignedMediumInt, schemas.UnsignedSmallInt:
+		return reflect.TypeOf(1).String()
 	case schemas.Decimal:
 		return reflect.TypeOf(float64(1)).String()
 	}
