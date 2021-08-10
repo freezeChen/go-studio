@@ -10,6 +10,8 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"xorm.io/xorm"
@@ -47,7 +49,6 @@ func MysqlDataSource(ctx *cli.Context) error {
 }
 
 func fromDataSource(url, tableName, dir, style string) error {
-
 	if dir != "" {
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
 			if err := os.MkdirAll(dir, 0755); err != nil {
@@ -98,13 +99,16 @@ func fromDataSource(url, tableName, dir, style string) error {
 		fmt.Println("DBMetas:" + err.Error())
 		return err
 	}
-	for _, table := range dbMetas {
-		fmt.Println(table.Name, tableName)
-		if table.Name == tableName {
 
+	for _, table := range dbMetas {
+		match, err := filepath.Match(tableName, table.Name)
+		if err != nil {
+			return err
+		}
+		if match {
 			tableMapper := TableMapper{
 				TableName:       table.Name,
-				TableMapperName: mapper.Table2Obj(table.Name),
+				TableMapperName: names.SnakeMapper{}.Table2Obj(table.Name),
 				Columns:         make([]ColumnMapper, 0, len(table.ColumnsSeq())),
 			}
 
@@ -142,6 +146,15 @@ func fromDataSource(url, tableName, dir, style string) error {
 }
 
 func typeString(col *schemas.Column) string {
+	switch col.SQLType.Name {
+	case schemas.UnsignedBigInt, schemas.UnsignedInt:
+		return reflect.TypeOf(int64(1)).String()
+	case schemas.UnsignedTinyInt, schemas.UnsignedMediumInt, schemas.UnsignedSmallInt:
+		return reflect.TypeOf(1).String()
+	case schemas.Decimal:
+		return reflect.TypeOf(float64(1)).String()
+	}
+
 	s := schemas.SQLType2Type(col.SQLType).String()
 	if s == "time.Time" {
 		return "jsontime.JsonTime"
@@ -150,21 +163,13 @@ func typeString(col *schemas.Column) string {
 }
 
 func tag(table *schemas.Table, col *schemas.Column) template.HTML {
-	//isNameId := col.FieldName == "Id"
-	//isIdPk := isNameId && typeString(col) == "int64"
 
 	var res []string
-	//if !col.Nullable {
-	//	if !isIdPk {
-	//		res = append(res, "not null")
-	//	}
-	//}
+
 	if col.IsPrimaryKey {
 		res = append(res, "pk")
 	}
-	//if col.Default != "" {
-	//	res = append(res, "default "+col.Default)
-	//}
+
 	if col.IsAutoIncrement {
 		res = append(res, "autoincr")
 	}
@@ -182,10 +187,6 @@ func tag(table *schemas.Table, col *schemas.Column) template.HTML {
 	}
 
 	res = append(res, "'"+col.Name+"'")
-
-	//if /*supportComment &&*/ col.Comment != "" {
-	//	res = append(res, fmt.Sprintf("comment('%s')", col.Comment))
-	//}
 
 	names := make([]string, 0, len(col.Indexes))
 	for name := range col.Indexes {
@@ -206,46 +207,7 @@ func tag(table *schemas.Table, col *schemas.Column) template.HTML {
 		}
 		res = append(res, uistr)
 	}
-	/*
-		nstr := col.SQLType.Name
-		if col.Length != 0 {
-			if col.Length2 != 0 {
-				nstr += fmt.Sprintf("(%v,%v)", col.Length, col.Length2)
-			} else {
-				nstr += fmt.Sprintf("(%v)", col.Length)
-			}
-		} else if len(col.EnumOptions) > 0 { //enum
-			nstr += "("
-			opts := ""
 
-			enumOptions := make([]string, 0, len(col.EnumOptions))
-			for enumOption := range col.EnumOptions {
-				enumOptions = append(enumOptions, enumOption)
-			}
-			sort.Strings(enumOptions)
-
-			for _, v := range enumOptions {
-				opts += fmt.Sprintf(",'%v'", v)
-			}
-			nstr += strings.TrimLeft(opts, ",")
-			nstr += ")"
-		} else if len(col.SetOptions) > 0 { //enum
-			nstr += "("
-			opts := ""
-
-			setOptions := make([]string, 0, len(col.SetOptions))
-			for setOption := range col.SetOptions {
-				setOptions = append(setOptions, setOption)
-			}
-			sort.Strings(setOptions)
-
-			for _, v := range setOptions {
-				opts += fmt.Sprintf(",'%v'", v)
-			}
-			nstr += strings.TrimLeft(opts, ",")
-			nstr += ")"
-		}
-		res = append(res, nstr)*/
 	if len(res) > 0 {
 		return template.HTML(fmt.Sprintf(`xorm:"%s"`, strings.Join(res, " ")))
 	}
